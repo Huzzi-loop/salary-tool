@@ -2,14 +2,10 @@
   "name": "salary-tool",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
   "scripts": {
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
-    "backend": "npm run dev --workspace=backend",
-    "frontend": "npm run dev --workspace=frontend"
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev"
   },
   "devDependencies": {
     "concurrently": "^7.6.0"
