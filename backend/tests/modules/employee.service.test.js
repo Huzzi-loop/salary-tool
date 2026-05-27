@@ -8,6 +8,7 @@ describe("EmployeeService", () => {
     repo = {
       createEmployee: jest.fn(),
       getEmployees: jest.fn(),
+      updateEmployee: jest.fn(),
     };
 
     service = new EmployeeService(repo);
@@ -75,6 +76,39 @@ describe("EmployeeService", () => {
         limit: 10,
         offset: 0,
       });
+    });
+  });
+
+  describe("updateEmployee", () => {
+    it("should update employee successfully", () => {
+      repo.updateEmployee = jest.fn().mockReturnValue({
+        id: 1,
+        first_name: "Updated",
+      });
+
+      const result = service.updateEmployee(1, {
+        first_name: "Updated",
+      });
+
+      expect(repo.updateEmployee).toHaveBeenCalledWith(1, {
+        first_name: "Updated",
+      });
+
+      expect(result.first_name).toBe("Updated");
+    });
+
+    it("should throw error if employee not found", () => {
+      repo.updateEmployee = jest.fn().mockReturnValue(null);
+
+      expect(() => service.updateEmployee(1, { first_name: "Test" })).toThrow(
+        "Employee not found",
+      );
+    });
+
+    it("should throw error for invalid salary", () => {
+      expect(() => service.updateEmployee(1, { salary: -100 })).toThrow(
+        "Invalid salary",
+      );
     });
   });
 });

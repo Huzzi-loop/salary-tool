@@ -32,7 +32,37 @@ function getEmployees({ limit, offset }) {
   return stmt.all(limit, offset);
 }
 
+function getEmployeeById(id) {
+  return db.prepare("SELECT * FROM employees WHERE id = ?").get(id);
+}
+
+function updateEmployee(id, data) {
+  const fields = [];
+  const values = [];
+
+  Object.entries(data).forEach(([key, value]) => {
+    fields.push(`${key} = ?`);
+    values.push(value);
+  });
+
+  values.push(id);
+
+  const stmt = db.prepare(`
+    UPDATE employees
+    SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `);
+
+  const result = stmt.run(...values);
+
+  if (result.changes === 0) return null;
+
+  return getEmployeeById(id);
+}
+
 module.exports = {
   createEmployee,
   getEmployees,
+  updateEmployee,
+  getEmployeeById,
 };

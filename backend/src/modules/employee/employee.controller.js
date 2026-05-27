@@ -3,6 +3,7 @@ const employeeRepository = require("./employee.repository");
 const {
   createEmployeeSchema,
   getEmployeesQuerySchema,
+  updateEmployeeSchema,
 } = require("./employee.validation");
 
 // instantiate service with repo (DI)
@@ -51,7 +52,25 @@ function getEmployees(req, res) {
   }
 }
 
+function updateEmployee(req, res) {
+  const id = Number(req.params.id);
+
+  const { error, value } = updateEmployeeSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
+  try {
+    const updated = employeeService.updateEmployee(id, value);
+    return res.json(updated);
+  } catch (err) {
+    return res.status(404).json({ error: err.message });
+  }
+}
+
 module.exports = {
   createEmployee,
   getEmployees,
+  updateEmployee,
 };
