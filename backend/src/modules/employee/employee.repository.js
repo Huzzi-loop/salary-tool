@@ -25,6 +25,7 @@ function createEmployee(data) {
 function getEmployees({ limit, offset }) {
   const stmt = db.prepare(`
     SELECT * FROM employees
+    WHERE is_active = 1
     ORDER BY created_at DESC
     LIMIT ? OFFSET ?
   `);
@@ -62,7 +63,9 @@ function updateEmployee(id, data) {
 
 function deleteEmployee(id) {
   const stmt = db.prepare(`
-    DELETE FROM employees WHERE id = ?
+    UPDATE employees
+    SET is_active = 0, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ? AND is_active = 1
   `);
 
   const result = stmt.run(id);
