@@ -69,8 +69,20 @@ function updateEmployee(req, res) {
   }
 }
 
+function deleteEmployee(req, res) {
+  const id = Number(req.params.id);
+
+  try {
+    employeeService.deleteEmployee(id);
+    return res.status(204).send();
+  } catch (err) {
+    return res.status(404).json({ error: err.message });
+  }
+}
+
 module.exports = {
   createEmployee,
   getEmployees,
   updateEmployee,
+  deleteEmployee,
 };

@@ -9,6 +9,7 @@ describe("EmployeeService", () => {
       createEmployee: jest.fn(),
       getEmployees: jest.fn(),
       updateEmployee: jest.fn(),
+      deleteEmployee: jest.fn(),
     };
 
     service = new EmployeeService(repo);
@@ -109,6 +110,23 @@ describe("EmployeeService", () => {
       expect(() => service.updateEmployee(1, { salary: -100 })).toThrow(
         "Invalid salary",
       );
+    });
+  });
+
+  describe("deleteEmployee", () => {
+    it("should delete employee successfully", () => {
+      repo.deleteEmployee = jest.fn().mockReturnValue(true);
+
+      const result = service.deleteEmployee(1);
+
+      expect(repo.deleteEmployee).toHaveBeenCalledWith(1);
+      expect(result).toEqual({ success: true });
+    });
+
+    it("should throw error if employee not found", () => {
+      repo.deleteEmployee = jest.fn().mockReturnValue(false);
+
+      expect(() => service.deleteEmployee(1)).toThrow("Employee not found");
     });
   });
 });

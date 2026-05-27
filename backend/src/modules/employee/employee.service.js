@@ -36,6 +36,16 @@ class EmployeeService {
 
     return updated;
   }
+
+  deleteEmployee(id) {
+    const deleted = this.employeeRepository.deleteEmployee(id);
+
+    if (!deleted) {
+      throw new Error("Employee not found");
+    }
+
+    return { success: true };
+  }
 }
 
 module.exports = EmployeeService;

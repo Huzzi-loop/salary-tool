@@ -60,9 +60,20 @@ function updateEmployee(id, data) {
   return getEmployeeById(id);
 }
 
+function deleteEmployee(id) {
+  const stmt = db.prepare(`
+    DELETE FROM employees WHERE id = ?
+  `);
+
+  const result = stmt.run(id);
+
+  return result.changes > 0;
+}
+
 module.exports = {
   createEmployee,
   getEmployees,
   updateEmployee,
   getEmployeeById,
+  deleteEmployee,
 };
