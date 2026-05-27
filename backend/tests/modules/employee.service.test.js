@@ -7,6 +7,7 @@ describe("EmployeeService", () => {
   beforeEach(() => {
     repo = {
       createEmployee: jest.fn(),
+      getEmployees: jest.fn(),
     };
 
     service = new EmployeeService(repo);
@@ -48,6 +49,32 @@ describe("EmployeeService", () => {
           salary: -10,
         }),
       ).toThrow("Invalid salary");
+    });
+  });
+
+  describe("getEmployees", () => {
+    it("should return employees with pagination", () => {
+      repo.getEmployees.mockReturnValue([{ id: 1 }]);
+
+      const result = service.getEmployees({ limit: 10, offset: 0 });
+
+      expect(repo.getEmployees).toHaveBeenCalledWith({
+        limit: 10,
+        offset: 0,
+      });
+
+      expect(result.length).toBe(1);
+    });
+
+    it("should use default pagination values", () => {
+      repo.getEmployees.mockReturnValue([]);
+
+      service.getEmployees({});
+
+      expect(repo.getEmployees).toHaveBeenCalledWith({
+        limit: 10,
+        offset: 0,
+      });
     });
   });
 });

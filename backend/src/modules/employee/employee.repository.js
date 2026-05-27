@@ -22,6 +22,17 @@ function createEmployee(data) {
     .get(result.lastInsertRowid);
 }
 
+function getEmployees({ limit, offset }) {
+  const stmt = db.prepare(`
+    SELECT * FROM employees
+    ORDER BY created_at DESC
+    LIMIT ? OFFSET ?
+  `);
+
+  return stmt.all(limit, offset);
+}
+
 module.exports = {
   createEmployee,
+  getEmployees,
 };

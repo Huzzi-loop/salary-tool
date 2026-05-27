@@ -18,6 +18,10 @@ class EmployeeService {
 
     return this.employeeRepository.createEmployee(data);
   }
+
+  getEmployees({ limit = 10, offset = 0 }) {
+    return this.employeeRepository.getEmployees({ limit, offset });
+  }
 }
 
 module.exports = EmployeeService;
