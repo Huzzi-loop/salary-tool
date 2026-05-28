@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  ActionIcon,
   Button,
   Center,
   Group,
@@ -9,13 +10,19 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { fetchEmployees, createEmployee } from "../services/employee.api";
+import {
+  fetchEmployees,
+  createEmployee,
+  deleteEmployee,
+} from "../services/employee.api";
 import CreateEmployeeModal from "../components/employee/CreateEmployeeModal";
 import { useDisclosure } from "@mantine/hooks";
+import DeleteEmployeeModal from "../components/employee/DeleteEmployeeModal";
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState(null);
   const [opened, { open, close }] = useDisclosure(false);
 
   const loadEmployees = async () => {
@@ -43,6 +50,11 @@ export default function Employees() {
     await loadEmployees();
   };
 
+  const handleDelete = async (id) => {
+    await deleteEmployee(id);
+    await loadEmployees();
+  };
+
   // 🧠 Loading state
   if (loading) {
     return (
@@ -66,6 +78,7 @@ export default function Employees() {
             <Table.Th>Department</Table.Th>
             <Table.Th>Country</Table.Th>
             <Table.Th>Salary</Table.Th>
+            <Table.Th>Actions</Table.Th>
           </Table.Tr>
         </Table.Thead>
 
@@ -79,6 +92,11 @@ export default function Employees() {
               <Table.Td>{emp.department || "-"}</Table.Td>
               <Table.Td>{emp.country}</Table.Td>
               <Table.Td>{emp.salary.toLocaleString()}</Table.Td>
+              <Table.Td>
+                <ActionIcon color="red" onClick={() => setDeleteId(emp.id)}>
+                  🗑
+                </ActionIcon>
+              </Table.Td>
             </Table.Tr>
           ))}
         </Table.Tbody>
@@ -88,6 +106,13 @@ export default function Employees() {
         opened={opened}
         onClose={close}
         onSuccess={handleCreate}
+      />
+
+      <DeleteEmployeeModal
+        employeeId={deleteId}
+        opened={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
       />
     </Paper>
   );
