@@ -67,6 +67,7 @@ export default function EmployeeFormModal({
 
       onClose();
     } catch (err) {
+      console.log("Error submitting employee form", err);
       const message = err?.response?.data?.error || "Something went wrong";
       setError(message);
     } finally {

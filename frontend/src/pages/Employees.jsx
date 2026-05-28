@@ -209,7 +209,7 @@ export default function Employees() {
       <EmployeeFormModal
         opened={opened}
         onClose={close}
-        onSuccess={handleCreate}
+        onSubmit={handleCreate}
       />
 
       {/* Edit */}
