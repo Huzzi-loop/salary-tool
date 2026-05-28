@@ -10,6 +10,7 @@ import {
 } from "@mantine/core";
 import { Select } from "@mantine/core";
 import { DEPARTMENTS } from "../../constants/employee.constants";
+import { countryOptions } from "../../utils/countries";
 
 export default function CreateEmployeeModal({ opened, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
@@ -98,10 +99,15 @@ export default function CreateEmployeeModal({ opened, onClose, onSuccess }) {
           mt="sm"
         />
 
-        <TextInput
+        <Select
           label="Country"
+          placeholder="Select country"
+          data={countryOptions}
+          searchable
+          limit={10}
+          nothingFoundMessage="No country found"
           value={form.country}
-          onChange={(e) => handleChange("country", e.target.value)}
+          onChange={(value) => handleChange("country", value)}
           mt="sm"
         />
 
