@@ -1,16 +1,27 @@
 import { useEffect, useState } from "react";
-import { Card, Text, Group, Loader, Center } from "@mantine/core";
+import {
+  Card,
+  Text,
+  Group,
+  Loader,
+  Center,
+  Select,
+  Stack,
+} from "@mantine/core";
 
 import { fetchSalaryStats } from "../services/analytics.api";
+import { DEPARTMENTS } from "../constants/employee.constants";
+import { countryOptions } from "../utils/countries";
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({});
 
   const loadStats = async () => {
     try {
       setLoading(true);
-      const res = await fetchSalaryStats();
+      const res = await fetchSalaryStats(filters);
       setStats(res.data);
     } catch (err) {
       console.error(err);
@@ -22,7 +33,16 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadStats();
-  }, []);
+  }, [filters]);
+
+  const handleFilterChange = (field, value) => {
+    const updated = {
+      ...filters,
+      [field]: value || undefined,
+    };
+
+    setFilters(updated);
+  };
 
   const formatSalary = (value) => {
     if (value == null) return "--";
@@ -37,7 +57,26 @@ export default function Dashboard() {
     );
 
   return (
-    <>
+    <Stack mb="md">
+      <Group grow>
+        <Select
+          placeholder="Filter by country"
+          data={countryOptions}
+          searchable
+          clearable
+          value={filters.country}
+          onChange={(val) => handleFilterChange("country", val)}
+        />
+
+        <Select
+          placeholder="Filter by department"
+          data={DEPARTMENTS}
+          clearable
+          value={filters.department}
+          onChange={(val) => handleFilterChange("department", val)}
+        />
+      </Group>
+
       <Group grow>
         <Card shadow="sm" p="lg">
           <Text size="sm" c="dimmed">
@@ -66,6 +105,6 @@ export default function Dashboard() {
           </Text>
         </Card>
       </Group>
-    </>
+    </Stack>
   );
 }
