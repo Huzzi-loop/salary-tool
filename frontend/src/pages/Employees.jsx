@@ -103,8 +103,15 @@ export default function Employees() {
               <Table.Td>{emp.country}</Table.Td>
               <Table.Td>{emp.salary.toLocaleString()}</Table.Td>
               <Table.Td>
-                <ActionIcon onClick={() => setEditEmployee(emp)}>✏️</ActionIcon>
-                <ActionIcon onClick={() => setDeleteId(emp.id)}>🗑</ActionIcon>
+                <Group gap="xs">
+                  <ActionIcon onClick={() => setEditEmployee(emp)}>
+                    ✏️
+                  </ActionIcon>
+
+                  <ActionIcon color="red" onClick={() => setDeleteId(emp.id)}>
+                    🗑️
+                  </ActionIcon>
+                </Group>
               </Table.Td>
             </Table.Tr>
           ))}
