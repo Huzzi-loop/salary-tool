@@ -18,9 +18,9 @@ const getEmployeesQuerySchema = Joi.object({
 const updateEmployeeSchema = Joi.object({
   first_name: Joi.string().trim().optional(),
   last_name: Joi.string().trim().optional(),
-  email: Joi.string().email().optional(),
+  email: Joi.string().email().optional().allow(null),
   job_title: Joi.string().trim().optional(),
-  department: Joi.string().trim().optional(),
+  department: Joi.string().trim().optional().allow(null),
   country: Joi.string().trim().optional(),
   salary: Joi.number().min(0).optional(),
 }).min(1);

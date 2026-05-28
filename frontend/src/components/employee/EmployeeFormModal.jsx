@@ -21,6 +21,7 @@ export default function EmployeeFormModal({
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
+    email: "",
     job_title: "",
     department: "",
     country: "",
@@ -34,7 +35,13 @@ export default function EmployeeFormModal({
   useEffect(() => {
     if (initialData) {
       setForm({
-        ...initialData,
+        first_name: initialData.first_name,
+        last_name: initialData.last_name,
+        email: initialData.email,
+        job_title: initialData.job_title,
+        department: initialData.department,
+        country: initialData.country,
+        salary: initialData.salary,
       });
     }
   }, [initialData]);
@@ -95,6 +102,14 @@ export default function EmployeeFormModal({
         label="Last Name"
         value={form.last_name}
         onChange={(e) => handleChange("last_name", e.target.value)}
+        mt="sm"
+      />
+
+      <TextInput
+        label="Email"
+        type="email"
+        value={form.email}
+        onChange={(e) => handleChange("email", e.target.value)}
         mt="sm"
       />
 
