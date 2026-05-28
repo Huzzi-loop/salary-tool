@@ -1,14 +1,19 @@
+import { useState } from "react";
 import {
   Modal,
   TextInput,
   NumberInput,
   Button,
   LoadingOverlay,
+  Text,
+  Alert,
 } from "@mantine/core";
-import { useState } from "react";
+import { Select } from "@mantine/core";
+import { DEPARTMENTS } from "../../constants/employee.constants";
 
 export default function CreateEmployeeModal({ opened, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -19,15 +24,17 @@ export default function CreateEmployeeModal({ opened, onClose, onSuccess }) {
   });
 
   const handleChange = (field, value) => {
+    setError("");
     setForm((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: value || "",
     }));
   };
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
+      setError("");
       await onSuccess({
         ...form,
         salary: Number(form.salary),
@@ -45,7 +52,9 @@ export default function CreateEmployeeModal({ opened, onClose, onSuccess }) {
 
       onClose();
     } catch (err) {
-      console.error("Create failed", err);
+      const message =
+        err?.response?.data?.error || "Something went wrong. Please try again.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -55,7 +64,11 @@ export default function CreateEmployeeModal({ opened, onClose, onSuccess }) {
     <Modal opened={opened} onClose={onClose} title="Add Employee">
       <div style={{ position: "relative" }}>
         <LoadingOverlay visible={loading} />
-
+        {error && (
+          <Alert color="red" mb="sm" radius="md">
+            {error}
+          </Alert>
+        )}
         <TextInput
           label="First Name"
           value={form.first_name}
@@ -76,10 +89,12 @@ export default function CreateEmployeeModal({ opened, onClose, onSuccess }) {
           mt="sm"
         />
 
-        <TextInput
+        <Select
           label="Department"
+          placeholder="Select department"
+          data={DEPARTMENTS}
           value={form.department}
-          onChange={(e) => handleChange("department", e.target.value)}
+          onChange={(value) => handleChange("department", value)}
           mt="sm"
         />
 
