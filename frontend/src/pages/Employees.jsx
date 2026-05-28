@@ -15,7 +15,7 @@ import {
   createEmployee,
   deleteEmployee,
 } from "../services/employee.api";
-import CreateEmployeeModal from "../components/employee/CreateEmployeeModal";
+import EmployeeFormModal from "../components/employee/EmployeeFormModal";
 import { useDisclosure } from "@mantine/hooks";
 import DeleteEmployeeModal from "../components/employee/DeleteEmployeeModal";
 
@@ -102,7 +102,7 @@ export default function Employees() {
         </Table.Tbody>
       </Table>
 
-      <CreateEmployeeModal
+      <EmployeeFormModal
         opened={opened}
         onClose={close}
         onSuccess={handleCreate}

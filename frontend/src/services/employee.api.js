@@ -6,3 +6,6 @@ export const fetchEmployees = (params) =>
 export const createEmployee = (data) => apiClient.post("/employee", data);
 
 export const deleteEmployee = (id) => apiClient.delete(`/employee/${id}`);
+
+export const updateEmployee = (id, data) =>
+  apiClient.put(`/employees/${id}`, data);
