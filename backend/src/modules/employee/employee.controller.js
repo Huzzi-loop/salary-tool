@@ -29,24 +29,22 @@ function createEmployee(req, res) {
 }
 
 function getEmployees(req, res) {
-  const { limit = 10, offset = 0 } = req.query;
-  const { error, value } = getEmployeesQuerySchema.validate({ limit, offset });
+  const { error, value } = getEmployeesQuerySchema.validate(req.query, {
+    abortEarly: false,
+  });
 
   if (error) {
     return res.status(400).json({
-      error: error.details[0].message,
+      error: error.details.map((e) => e.message),
     });
   }
 
   try {
-    const employees = employeeService.getEmployees({
-      limit: Number(limit),
-      offset: Number(offset),
-    });
+    const result = employeeService.getEmployees(value);
 
-    return res.json(employees);
+    return res.json(result);
   } catch (err) {
-    return res.status(500).json({
+    return res.status(400).json({
       error: err.message,
     });
   }

@@ -22,15 +22,40 @@ function createEmployee(data) {
     .get(result.lastInsertRowid);
 }
 
-function getEmployees({ limit, offset }) {
-  const stmt = db.prepare(`
-    SELECT * FROM employees
-    WHERE is_active = 1
-    ORDER BY created_at DESC
-    LIMIT ? OFFSET ?
-  `);
+function getEmployees({ limit, offset, search, country, department }) {
+  let where = "WHERE is_active = 1";
+  const params = [];
 
-  return stmt.all(limit, offset);
+  if (search) {
+    where += " AND (first_name LIKE ? OR last_name LIKE ?)";
+    params.push(`%${search}%`, `%${search}%`);
+  }
+
+  if (country) {
+    where += " AND country = ?";
+    params.push(country);
+  }
+
+  if (department) {
+    where += " AND department = ?";
+    params.push(department);
+  }
+
+  const dataQuery = `
+    SELECT * FROM employees
+    ${where}
+    LIMIT ? OFFSET ?
+  `;
+
+  const totalQuery = `
+    SELECT COUNT(*) as total FROM employees
+    ${where}
+  `;
+
+  const data = db.prepare(dataQuery).all(...params, limit, offset);
+  const total = db.prepare(totalQuery).get(...params).total;
+
+  return { data, total };
 }
 
 function getEmployeeById(id) {

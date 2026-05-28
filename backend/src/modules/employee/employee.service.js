@@ -19,8 +19,8 @@ class EmployeeService {
     return this.employeeRepository.createEmployee(data);
   }
 
-  getEmployees({ limit = 10, offset = 0 }) {
-    return this.employeeRepository.getEmployees({ limit, offset });
+  getEmployees(params) {
+    return this.employeeRepository.getEmployees(params);
   }
 
   updateEmployee(id, data) {

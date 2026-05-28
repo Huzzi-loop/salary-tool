@@ -13,6 +13,9 @@ const createEmployeeSchema = Joi.object({
 const getEmployeesQuerySchema = Joi.object({
   limit: Joi.number().integer().min(1).max(100).default(10),
   offset: Joi.number().integer().min(0).default(0),
+  search: Joi.string().allow("").optional(),
+  country: Joi.string().optional(),
+  department: Joi.string().optional(),
 });
 
 const updateEmployeeSchema = Joi.object({
