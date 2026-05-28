@@ -1,10 +1,22 @@
 import { useEffect, useState } from "react";
-import { Center, Loader, Paper, Table, Title } from "@mantine/core";
-import { fetchEmployees } from "../services/employee.api";
+import {
+  Button,
+  Center,
+  Group,
+  Loader,
+  Paper,
+  Table,
+  Text,
+  Title,
+} from "@mantine/core";
+import { fetchEmployees, createEmployee } from "../services/employee.api";
+import CreateEmployeeModal from "../components/employee/CreateEmployeeModal";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [opened, { open, close }] = useDisclosure(false);
 
   const loadEmployees = async () => {
     try {
@@ -14,7 +26,6 @@ export default function Employees() {
         limit: 10,
         offset: 0,
       });
-      console.log("Fetched employees:", res.data);
       setEmployees(res.data);
     } catch (err) {
       console.error("Failed to fetch employees", err);
@@ -27,6 +38,11 @@ export default function Employees() {
     loadEmployees();
   }, []);
 
+  const handleCreate = async (data) => {
+    await createEmployee(data);
+    await loadEmployees();
+  };
+
   // 🧠 Loading state
   if (loading) {
     return (
@@ -38,6 +54,10 @@ export default function Employees() {
 
   return (
     <Paper shadow="sm" p="md">
+      <Group mb="md" justify="space-between">
+        <Text fw={600}>Employees</Text>
+        <Button onClick={open}>Add Employee</Button>
+      </Group>
       <Table striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
@@ -63,6 +83,12 @@ export default function Employees() {
           ))}
         </Table.Tbody>
       </Table>
+
+      <CreateEmployeeModal
+        opened={opened}
+        onClose={close}
+        onSuccess={handleCreate}
+      />
     </Paper>
   );
 }
