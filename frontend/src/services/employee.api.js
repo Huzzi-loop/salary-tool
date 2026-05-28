@@ -1,4 +1,4 @@
-import { apiClient } from "./api";
+import apiClient from "./api";
 
 export const fetchEmployees = (params) =>
-  apiClient.get("/employees", { params });
+  apiClient.get("/employee", { params });
