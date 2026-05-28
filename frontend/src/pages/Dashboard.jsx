@@ -14,6 +14,7 @@ export default function Dashboard() {
       setStats(res.data);
     } catch (err) {
       console.error(err);
+      setStats(null);
     } finally {
       setLoading(false);
     }
@@ -23,13 +24,48 @@ export default function Dashboard() {
     loadStats();
   }, []);
 
-  if (loading) {
+  const formatSalary = (value) => {
+    if (value == null) return "--";
+    return `₹${Math.round(value).toLocaleString()}`;
+  };
+
+  if (loading)
     return (
-      <Center mt="xl">
-        <Loader />
+      <Center mb="md">
+        <Loader size="sm" />
       </Center>
     );
-  }
 
-  return null;
+  return (
+    <>
+      <Group grow>
+        <Card shadow="sm" p="lg">
+          <Text size="sm" c="dimmed">
+            Average Salary
+          </Text>
+          <Text fw={700} size="xl">
+            {formatSalary(stats?.avg_salary)}
+          </Text>
+        </Card>
+
+        <Card shadow="sm" p="lg">
+          <Text size="sm" c="dimmed">
+            Minimum Salary
+          </Text>
+          <Text fw={700} size="xl">
+            {formatSalary(stats?.min_salary)}
+          </Text>
+        </Card>
+
+        <Card shadow="sm" p="lg">
+          <Text size="sm" c="dimmed">
+            Maximum Salary
+          </Text>
+          <Text fw={700} size="xl">
+            {formatSalary(stats?.max_salary)}
+          </Text>
+        </Card>
+      </Group>
+    </>
+  );
 }

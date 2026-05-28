@@ -1,5 +1,6 @@
 const AnalyticsService = require("./analytics.service");
 const analyticsRepository = require("./analytics.repository");
+const { getSalaryStatsQuerySchema } = require("./analytics.validation");
 
 const analyticsService = new AnalyticsService(analyticsRepository);
 
