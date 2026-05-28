@@ -1,20 +1,23 @@
-import { useState } from "react";
 import {
   Modal,
   TextInput,
   NumberInput,
   Button,
-  LoadingOverlay,
-  Text,
+  Select,
   Alert,
 } from "@mantine/core";
-import { Select } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { DEPARTMENTS } from "../../constants/employee.constants";
 import { countryOptions } from "../../utils/countries";
 
-export default function CreateEmployeeModal({ opened, onClose, onSuccess }) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+export default function EmployeeFormModal({
+  opened,
+  onClose,
+  onSubmit,
+  initialData,
+}) {
+  const isEdit = !!initialData;
+
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -24,8 +27,21 @@ export default function CreateEmployeeModal({ opened, onClose, onSuccess }) {
     salary: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // 🧠 Prefill for edit
+  useEffect(() => {
+    if (initialData) {
+      setForm({
+        ...initialData,
+      });
+    }
+  }, [initialData]);
+
   const handleChange = (field, value) => {
     setError("");
+
     setForm((prev) => ({
       ...prev,
       [field]: value || "",
@@ -36,97 +52,87 @@ export default function CreateEmployeeModal({ opened, onClose, onSuccess }) {
     try {
       setLoading(true);
       setError("");
-      await onSuccess({
+
+      await onSubmit({
         ...form,
         salary: Number(form.salary),
       });
 
-      // reset form
-      setForm({
-        first_name: "",
-        last_name: "",
-        job_title: "",
-        department: "",
-        country: "",
-        salary: "",
-      });
-
       onClose();
     } catch (err) {
-      const message =
-        err?.response?.data?.error || "Something went wrong. Please try again.";
+      const message = err?.response?.data?.error || "Something went wrong";
       setError(message);
     } finally {
       setLoading(false);
     }
   };
 
+  const onCloseModal = () => {
+    setError("");
+    setLoading(false);
+    onClose();
+  };
+
   return (
-    <Modal opened={opened} onClose={onClose} title="Add Employee">
-      <div style={{ position: "relative" }}>
-        <LoadingOverlay visible={loading} />
-        {error && (
-          <Alert color="red" mb="sm" radius="md">
-            {error}
-          </Alert>
-        )}
-        <TextInput
-          label="First Name"
-          value={form.first_name}
-          onChange={(e) => handleChange("first_name", e.target.value)}
-        />
+    <Modal
+      opened={opened}
+      onClose={onCloseModal}
+      title={isEdit ? "Edit Employee" : "Add Employee"}
+    >
+      {error && (
+        <Alert color="red" mb="sm">
+          {error}
+        </Alert>
+      )}
 
-        <TextInput
-          label="Last Name"
-          value={form.last_name}
-          onChange={(e) => handleChange("last_name", e.target.value)}
-          mt="sm"
-        />
+      <TextInput
+        label="First Name"
+        value={form.first_name}
+        onChange={(e) => handleChange("first_name", e.target.value)}
+      />
 
-        <TextInput
-          label="Job Title"
-          value={form.job_title}
-          onChange={(e) => handleChange("job_title", e.target.value)}
-          mt="sm"
-        />
+      <TextInput
+        label="Last Name"
+        value={form.last_name}
+        onChange={(e) => handleChange("last_name", e.target.value)}
+        mt="sm"
+      />
 
-        <Select
-          label="Department"
-          placeholder="Select department"
-          data={DEPARTMENTS}
-          value={form.department}
-          onChange={(value) => handleChange("department", value)}
-          mt="sm"
-        />
+      <TextInput
+        label="Job Title"
+        value={form.job_title}
+        onChange={(e) => handleChange("job_title", e.target.value)}
+        mt="sm"
+      />
 
-        <Select
-          label="Country"
-          placeholder="Select country"
-          data={countryOptions}
-          searchable
-          limit={10}
-          nothingFoundMessage="No country found"
-          value={form.country}
-          onChange={(value) => handleChange("country", value)}
-          mt="sm"
-        />
+      <Select
+        label="Department"
+        data={DEPARTMENTS}
+        value={form.department}
+        onChange={(val) => handleChange("department", val)}
+        mt="sm"
+      />
 
-        <NumberInput
-          label="Salary"
-          value={form.salary}
-          onChange={(val) => handleChange("salary", val)}
-          mt="sm"
-        />
+      <Select
+        label="Country"
+        data={countryOptions}
+        searchable
+        limit={10}
+        value={form.country}
+        onChange={(val) => handleChange("country", val)}
+        mt="sm"
+      />
 
-        <Button
-          fullWidth
-          mt="md"
-          onClick={handleSubmit}
-          disabled={!form.first_name || !form.last_name}
-        >
-          Create
-        </Button>
-      </div>
+      <NumberInput
+        label="Salary"
+        value={form.salary}
+        onChange={(val) => handleChange("salary", val)}
+        mt="sm"
+      />
+
+      <Button fullWidth mt="md" loading={loading} onClick={handleSubmit}>
+        {isEdit ? "Update" : "Create"}
+      </Button>
     </Modal>
   );
 }

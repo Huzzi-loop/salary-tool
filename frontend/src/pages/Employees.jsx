@@ -14,6 +14,7 @@ import {
   fetchEmployees,
   createEmployee,
   deleteEmployee,
+  updateEmployee,
 } from "../services/employee.api";
 import EmployeeFormModal from "../components/employee/EmployeeFormModal";
 import { useDisclosure } from "@mantine/hooks";
@@ -23,6 +24,9 @@ export default function Employees() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
+  const [editEmployee, setEditEmployee] = useState(null);
+
+  // Controls the employee form modal
   const [opened, { open, close }] = useDisclosure(false);
 
   const loadEmployees = async () => {
@@ -52,6 +56,12 @@ export default function Employees() {
 
   const handleDelete = async (id) => {
     await deleteEmployee(id);
+    await loadEmployees();
+  };
+
+  const handleUpdate = async (data) => {
+    await updateEmployee(editEmployee.id, data);
+    setEditEmployee(null);
     await loadEmployees();
   };
 
@@ -93,19 +103,27 @@ export default function Employees() {
               <Table.Td>{emp.country}</Table.Td>
               <Table.Td>{emp.salary.toLocaleString()}</Table.Td>
               <Table.Td>
-                <ActionIcon color="red" onClick={() => setDeleteId(emp.id)}>
-                  🗑
-                </ActionIcon>
+                <ActionIcon onClick={() => setEditEmployee(emp)}>✏️</ActionIcon>
+                <ActionIcon onClick={() => setDeleteId(emp.id)}>🗑</ActionIcon>
               </Table.Td>
             </Table.Tr>
           ))}
         </Table.Tbody>
       </Table>
 
+      {/* Create */}
       <EmployeeFormModal
         opened={opened}
         onClose={close}
         onSuccess={handleCreate}
+      />
+
+      {/* Edit */}
+      <EmployeeFormModal
+        opened={!!editEmployee}
+        onClose={() => setEditEmployee(null)}
+        onSubmit={handleUpdate}
+        initialData={editEmployee}
       />
 
       <DeleteEmployeeModal
